@@ -22,7 +22,7 @@ app.UseSwagger(opt =>
     {
         if (!httpReq.Headers.ContainsKey("X-Forwarded-For")) return;
         string prefix = "api";
-        var serverUrl = $"{httpReq.Scheme}://{httpReq.Host}/{prefix}";
+        var serverUrl = $"{httpReq.Scheme}://{httpReq.Headers["X-Forwarded-For"]}/{prefix}";
         swagger.Servers = new List<OpenApiServer> { new() { Url = serverUrl } };
     });
 });
