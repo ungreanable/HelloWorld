@@ -20,9 +20,9 @@ app.UseSwagger(opt =>
 {
     opt.PreSerializeFilters.Add((swagger, httpReq) =>
     {
-        if (!httpReq.Headers.ContainsKey("X-Forwarded-Host")) return;
+        if (!httpReq.Headers.ContainsKey("X-Forwarded-Prefix")) return;
         var basePath = "proxy";
-        var serverUrl = $"{httpReq.Scheme}://{httpReq.Headers["X-Forwarded-Host"]}/{basePath}";
+        var serverUrl = $"{httpReq.Scheme}://{httpReq.Headers["X-Forwarded-Prefix"]}/{basePath}";
         swagger.Servers = new List<OpenApiServer> { new() { Url = serverUrl } };
     });
 });
