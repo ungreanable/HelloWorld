@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,7 +16,16 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
-app.UseSwagger();
+app.UseSwagger(opt =>
+{
+    opt.PreSerializeFilters.Add((swagger, httpReq) =>
+    {
+        if (!httpReq.Headers.ContainsKey("X-Forwarded-Host")) return;
+        var basePath = "proxy";
+        var serverUrl = $"{httpReq.Scheme}://{httpReq.Headers["X-Forwarded-Host"]}/{basePath}";
+        swagger.Servers = new List<OpenApiServer> { new() { Url = serverUrl } };
+    });
+});
 app.UseSwaggerUI();
 //}
 
