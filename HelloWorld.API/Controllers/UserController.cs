@@ -33,7 +33,6 @@ namespace HelloWorld.API.Controllers
                 if (cacheUser?.Password == user?.Password)
                     return $"Access Granted";
             }
-
             return "Access Denied";
         }
 
