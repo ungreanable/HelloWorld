@@ -3,6 +3,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS base
 RUN apk add --no-cache tzdata
 ENV TZ=Asia/Bangkok
+ARG BUILD_VERSION=1.0
 ENV BUILD_VERSION=$BUILD_VERSION
 USER app
 WORKDIR /app
