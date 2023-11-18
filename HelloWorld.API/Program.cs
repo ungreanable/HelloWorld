@@ -44,7 +44,7 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", $"Build Version: {version}");
 });
 //}
-
+//Test
 //app.UseHttpsRedirection();
 
 app.UseAuthorization();
