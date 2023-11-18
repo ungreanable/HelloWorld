@@ -38,7 +38,11 @@ app.UseSwagger(opt =>
         swagger.Servers = new List<OpenApiServer> { new() { Url = serverUrl } };
     });
 });
-app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    string version = Environment.GetEnvironmentVariable("BUILD_VERSION") ?? "1";
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", $"Build Version: {version}");
+});
 //}
 
 //app.UseHttpsRedirection();
