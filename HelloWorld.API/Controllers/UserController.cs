@@ -87,7 +87,6 @@ namespace HelloWorld.API.Controllers
                 .SetSlidingExpiration(TimeSpan.FromHours(24));
                 await _cache.SetAsync("ListUsers", encodedcListUsers, listUserOptions);
             }
-
             return $"User: {user.Username} Registered Success (Registered Date: {DateTime.Now:yyyy-MM-dd HH:mm:ss}, Expired Date: {DateTime.Now.AddHours(1):yyyy-MM-dd HH:mm:ss})";
         }
 
