@@ -76,7 +76,7 @@ namespace HelloWorld.API.Controllers
                         Username = user.Username,
                         Password = user.Password,
                         RegisteredDateTime = DateTime.Now,
-                        ExpiredDateTime = DateTime.Now.AddHours(1)
+                        ExpiredDateTime = DateTime.Now.AddMinutes(30)
                     } 
                 };
 
