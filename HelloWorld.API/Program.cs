@@ -41,7 +41,7 @@ app.UseSwagger(opt =>
 app.UseSwaggerUI(c =>
 {
     string version = Environment.GetEnvironmentVariable("BUILD_VERSION") ?? "1";
-    c.SwaggerEndpoint("swagger/v1/swagger.json", $"Build Version: {version}");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", $"Build Version: {version}");
 });
 //}
 
