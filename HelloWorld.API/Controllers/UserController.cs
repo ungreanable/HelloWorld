@@ -30,9 +30,20 @@ namespace HelloWorld.API.Controllers
                 var cacheUser = JsonConvert.DeserializeObject<UserModel>(cachedDataString);
 
                 if (cacheUser?.Password == user?.Password)
-                    return new JsonResult($"Access Granted");
+                {
+                    return Ok(new
+                    {
+                        responseCode = System.Net.HttpStatusCode.OK,
+                        result = "Access Granted"
+                    });
+                }
             }
-            return new JsonResult("Access Denied");
+            return Ok(new
+            {
+                responseCode = System.Net.HttpStatusCode.OK,
+                result = "Access Denied"
+            });
+
         }
 
         [HttpPost("Register")]
@@ -86,11 +97,15 @@ namespace HelloWorld.API.Controllers
                 .SetSlidingExpiration(TimeSpan.FromHours(24));
                 await _cache.SetAsync("ListUsers", encodedcListUsers, listUserOptions);
             }
-            return new JsonResult($"User: {user.Username} Registered Success (Registered Date: {DateTime.Now:yyyy-MM-dd HH:mm:ss}, Expired Date: {DateTime.Now.AddHours(1):yyyy-MM-dd HH:mm:ss})");
+            return Ok(new
+            {
+                responseCode = System.Net.HttpStatusCode.OK,
+                result = $"User: {user.Username} Registered Success (Registered Date: {DateTime.Now:yyyy-MM-dd HH:mm:ss}, Expired Date: {DateTime.Now.AddHours(1):yyyy-MM-dd HH:mm:ss})"
+            });
         }
 
         [HttpGet("ListUsers")]
-        public async Task<List<UserListModel>> ListUserAsync()
+        public async Task<IActionResult> ListUserAsync()
         {
             var encodedCachedUsers = await _cache.GetAsync("ListUsers");
             if (encodedCachedUsers != null)
@@ -106,10 +121,18 @@ namespace HelloWorld.API.Controllers
                 .SetSlidingExpiration(TimeSpan.FromHours(24));
                 await _cache.SetAsync("ListUsers", encodedcListUsers, listUserOptions);
 
-                return cacheUser;
+                return Ok(new
+                {
+                    responseCode = System.Net.HttpStatusCode.OK,
+                    result = cacheUser
+                });
             }
 
-            return [];
+            return Ok(new
+            {
+                responseCode = System.Net.HttpStatusCode.OK,
+                result = new List<UserListModel>()
+            });
         }
 
         public class UserModel
