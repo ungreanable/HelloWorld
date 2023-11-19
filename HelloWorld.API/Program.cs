@@ -18,11 +18,17 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 var app = builder.Build();
 
-app.Use((context, next) =>
+var pathBase = builder.Configuration["API_PATH_BASE"];
+if (!string.IsNullOrWhiteSpace(pathBase))
 {
-    context.Request.Scheme = "https";
-    return next(context);
-});
+    app.UsePathBase($"/{pathBase.TrimStart('/')}");
+}
+
+//app.Use((context, next) =>
+//{
+//    context.Request.Scheme = "https";
+//    return next(context);
+//});
 
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
@@ -41,7 +47,7 @@ app.UseSwagger(opt =>
 app.UseSwaggerUI(c =>
 {
     string version = Environment.GetEnvironmentVariable("BUILD_VERSION") ?? "1";
-    c.SwaggerEndpoint("/api/swagger/v1/swagger.json", $"Build Version: {version}");
+    c.SwaggerEndpoint("v1/swagger.json", $"Build Version: {version}");
 });
 //}
 //Test

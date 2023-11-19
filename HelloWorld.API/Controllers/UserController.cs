@@ -21,9 +21,8 @@ namespace HelloWorld.API.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<string> LoginAsync(UserModel user)
+        public async Task<IActionResult> LoginAsync(UserModel user)
         {
-            //if(username == "")
             var encodedCachedUser = await _cache.GetAsync(user?.Username);
             if (encodedCachedUser != null)
             {
@@ -31,13 +30,13 @@ namespace HelloWorld.API.Controllers
                 var cacheUser = JsonConvert.DeserializeObject<UserModel>(cachedDataString);
 
                 if (cacheUser?.Password == user?.Password)
-                    return $"Access Granted";
+                    return new JsonResult($"Access Granted");
             }
-            return "Access Denied";
+            return new JsonResult("Access Denied");
         }
 
         [HttpPost("Register")]
-        public async Task<string> RegisterAsync(UserModel user)
+        public async Task<IActionResult> RegisterAsync(UserModel user)
         {
             var cachedUser = JsonConvert.SerializeObject(user);
             var encodedcachedUser = Encoding.UTF8.GetBytes(cachedUser);
@@ -87,7 +86,7 @@ namespace HelloWorld.API.Controllers
                 .SetSlidingExpiration(TimeSpan.FromHours(24));
                 await _cache.SetAsync("ListUsers", encodedcListUsers, listUserOptions);
             }
-            return $"User: {user.Username} Registered Success (Registered Date: {DateTime.Now:yyyy-MM-dd HH:mm:ss}, Expired Date: {DateTime.Now.AddHours(1):yyyy-MM-dd HH:mm:ss})";
+            return new JsonResult($"User: {user.Username} Registered Success (Registered Date: {DateTime.Now:yyyy-MM-dd HH:mm:ss}, Expired Date: {DateTime.Now.AddHours(1):yyyy-MM-dd HH:mm:ss})");
         }
 
         [HttpGet("ListUsers")]
@@ -99,6 +98,14 @@ namespace HelloWorld.API.Controllers
                 var cachedDataString = Encoding.UTF8.GetString(encodedCachedUsers);
                 var cacheUser = JsonConvert.DeserializeObject<List<UserListModel>>(cachedDataString);
 
+                cacheUser = cacheUser?.Where(x => x.ExpiredDateTime <= DateTime.Now).ToList();
+                var objListUsers = JsonConvert.SerializeObject(cacheUser);
+                var encodedcListUsers = Encoding.UTF8.GetBytes(objListUsers);
+
+                var listUserOptions = new DistributedCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromHours(24));
+                await _cache.SetAsync("ListUsers", encodedcListUsers, listUserOptions);
+
                 return cacheUser;
             }
 
@@ -108,6 +115,7 @@ namespace HelloWorld.API.Controllers
         public class UserModel
         {
             public string? Username { get; set; }
+            [JsonIgnore]
             public string? Password { get; set; }
             
         }
