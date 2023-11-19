@@ -1,3 +1,4 @@
+using HelloWorld.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
@@ -29,7 +30,7 @@ namespace HelloWorld.API.Controllers
                 var cachedDataString = Encoding.UTF8.GetString(encodedCachedUser);
                 var cacheUser = JsonConvert.DeserializeObject<UserModel>(cachedDataString);
 
-                if (cacheUser?.Password == user?.Password)
+                if (cacheUser?.Password == EncryptionHelper.EncodePasswordToBase64(user?.Password))
                 {
                     return Ok(new
                     {
@@ -49,6 +50,7 @@ namespace HelloWorld.API.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> RegisterAsync(UserModel user)
         {
+            user.Password = EncryptionHelper.EncodePasswordToBase64(user.Password);
             var cachedUser = JsonConvert.SerializeObject(user);
             var encodedcachedUser = Encoding.UTF8.GetBytes(cachedUser);
 
@@ -65,7 +67,7 @@ namespace HelloWorld.API.Controllers
                 cachedListUsers?.Add(new UserListModel()
                 {
                     Username = user.Username,
-                    Password = user.Password,
+                    Password = EncryptionHelper.EncodePasswordToBase64(user.Password),
                     RegisteredDateTime = DateTime.Now,
                     ExpiredDateTime = DateTime.Now.AddMinutes(30)
                 });
@@ -84,7 +86,7 @@ namespace HelloWorld.API.Controllers
                     new UserListModel()
                     {
                         Username = user.Username,
-                        Password = user.Password,
+                        Password = EncryptionHelper.EncodePasswordToBase64(user.Password),
                         RegisteredDateTime = DateTime.Now,
                         ExpiredDateTime = DateTime.Now.AddMinutes(30)
                     } 
@@ -113,7 +115,7 @@ namespace HelloWorld.API.Controllers
                 var cachedDataString = Encoding.UTF8.GetString(encodedCachedUsers);
                 var cacheUser = JsonConvert.DeserializeObject<List<UserListModel>>(cachedDataString);
 
-                cacheUser = cacheUser?.Where(x => x.ExpiredDateTime <= DateTime.Now).ToList();
+                cacheUser = cacheUser?.Where(x => x.ExpiredDateTime >= DateTime.Now).ToList();
                 var objListUsers = JsonConvert.SerializeObject(cacheUser);
                 var encodedcListUsers = Encoding.UTF8.GetBytes(objListUsers);
 
@@ -138,7 +140,6 @@ namespace HelloWorld.API.Controllers
         public class UserModel
         {
             public string? Username { get; set; }
-            [JsonIgnore]
             public string? Password { get; set; }
             
         }
