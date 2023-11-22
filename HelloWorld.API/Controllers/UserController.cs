@@ -54,6 +54,15 @@ namespace HelloWorld.API.Controllers
             var cachedUser = JsonConvert.SerializeObject(user);
             var encodedcachedUser = Encoding.UTF8.GetBytes(cachedUser);
 
+            var cachedRegistered = await _cache.GetAsync(user?.Username);
+            if (cachedRegistered != null) 
+            {
+                return Ok(new
+                {
+                    responseCode = System.Net.HttpStatusCode.OK,
+                    result = $"ERROR: Username {user?.Username} Registered Already"
+                });
+            }
             var options = new DistributedCacheEntryOptions()
                 .SetSlidingExpiration(TimeSpan.FromHours(1));
             await _cache.SetAsync(user?.Username, encodedcachedUser, options);
