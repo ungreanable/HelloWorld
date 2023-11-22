@@ -57,6 +57,8 @@ app.UseSwaggerUI(c =>
 //Test
 //app.UseHttpsRedirection();
 
+app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed((host) => true).AllowCredentials());
+
 app.UseAuthorization();
 
 app.MapControllers();
