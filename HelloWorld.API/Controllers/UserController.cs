@@ -146,6 +146,17 @@ namespace HelloWorld.API.Controllers
             });
         }
 
+        [HttpPost("CheckStatusUpdate")]
+        public async Task<IActionResult> CheckStatusUpdate(string path = "Response/response.json")
+        {
+            var updated = await NotifyHelper.CheckStatusUpdated(path);
+            return Ok(new
+            {
+                responseCode = System.Net.HttpStatusCode.OK,
+                result = updated
+            });
+        }
+
         public class UserModel
         {
             public string? Username { get; set; }
