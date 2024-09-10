@@ -1,11 +1,26 @@
+using HelloWorld.API.Jobs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
+using Quartz;
 using System.IO.Compression;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddQuartz(q =>
+{
+    var jobKey = new JobKey("NotifyJob");
+    q.AddJob<NotifyJob>(opts => opts.WithIdentity(jobKey));
+
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("NotifyJob-trigger")
+        .WithCronSchedule("0 0 * ? * * *"));
+});
+
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 // Add services to the container.
 builder.Services.AddResponseCompression(options =>
