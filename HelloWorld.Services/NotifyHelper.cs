@@ -67,6 +67,7 @@ namespace HelloWorld.Services
                     {
                         { new StringContent(message, Encoding.UTF8, MediaTypeNames.Text.Plain), "message" },
                     };
+			httpClient.DefaultRequestHeaders.Clear();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "cckXcpd5ZwV0k9d7jnGulLv8lCdbrG4mZEG5eydA5LH");
             using var response = await httpClient.PostAsync("https://notify-api.line.me/api/notify", multipartContent);
         }
