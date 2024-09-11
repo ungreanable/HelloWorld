@@ -7,7 +7,22 @@ namespace HelloWorld.API.Jobs
     {
         public async Task Execute(IJobExecutionContext context)
         {
-            await NotifyHelper.CheckStatusUpdated("Response/response.json");
+            try
+            {
+                var updated = await NotifyHelper.CheckStatusUpdated("Response/response.json");
+                if(updated)
+                {
+                    await NotifyHelper.NotifyLine($"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}]: Claim Status Updated");
+                }
+                else
+                {
+                    await NotifyHelper.NotifyLine($"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}]: Claim Status Nothing Changed");
+                }
+            }
+            catch(Exception ex)
+            {
+                await NotifyHelper.NotifyLine(ex.Message);
+            }
             //Write your custom code here
         }
     }
