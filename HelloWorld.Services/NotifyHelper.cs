@@ -29,6 +29,7 @@ namespace HelloWorld.Services
                         { new StringContent("0825524693", Encoding.UTF8, MediaTypeNames.Text.Plain), "tel" },
                         { new StringContent("saka", Encoding.UTF8, MediaTypeNames.Text.Plain), "saka" }
                     };
+				httpClient.DefaultRequestHeaders.Clear();	
                 using var response = await httpClient.PostAsync("https://www.advice.co.th/claimstatus/getClaim", multipartContent);
 
                 if (response.IsSuccessStatusCode)
