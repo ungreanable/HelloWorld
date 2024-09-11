@@ -26,6 +26,7 @@ RUN dotnet publish "./HelloWorld.API.csproj" -c $BUILD_CONFIGURATION -o /app/pub
 
 FROM base AS final
 WORKDIR /app
+USER root
 RUN chmod 0777 Response/response.json
 ENV TZ=Asia/Bangkok
 COPY --from=publish /app/publish .
