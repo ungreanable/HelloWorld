@@ -29,6 +29,7 @@ namespace HelloWorld.Services
                         { new StringContent("0825524693", Encoding.UTF8, MediaTypeNames.Text.Plain), "tel" },
                         { new StringContent("saka", Encoding.UTF8, MediaTypeNames.Text.Plain), "saka" }
                     };
+				httpClient.DefaultRequestHeaders.Clear();	
                 using var response = await httpClient.PostAsync("https://www.advice.co.th/claimstatus/getClaim", multipartContent);
 
                 if (response.IsSuccessStatusCode)
@@ -38,7 +39,6 @@ namespace HelloWorld.Services
                     if (!result)
                     {
                         File.WriteAllText("Response/response.json", responseJSON);
-                        await NotifyLine();
                         return true;
                     }
                 }
@@ -62,12 +62,13 @@ namespace HelloWorld.Services
             return Encoding.UTF8.GetString(stream.ToArray());
         }
 
-        private async static Task NotifyLine()
+        public async static Task NotifyLine(string message)
         {
             using MultipartFormDataContent multipartContent = new MultipartFormDataContent()
                     {
-                        { new StringContent("Claim Status Updated", Encoding.UTF8, MediaTypeNames.Text.Plain), "message" },
+                        { new StringContent(message, Encoding.UTF8, MediaTypeNames.Text.Plain), "message" },
                     };
+			httpClient.DefaultRequestHeaders.Clear();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "cckXcpd5ZwV0k9d7jnGulLv8lCdbrG4mZEG5eydA5LH");
             using var response = await httpClient.PostAsync("https://notify-api.line.me/api/notify", multipartContent);
         }

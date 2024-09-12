@@ -149,7 +149,18 @@ namespace HelloWorld.API.Controllers
         [HttpPost("CheckStatusUpdate")]
         public async Task<IActionResult> CheckStatusUpdate(string path = "Response/response.json")
         {
-            var updated = await NotifyHelper.CheckStatusUpdated(path);
+            bool updated;
+            try
+            {
+                updated = await NotifyHelper.CheckStatusUpdated(path);
+            }
+            catch(Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+            if(updated)
+                await NotifyHelper.NotifyLine($"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}]: Claim Status Updated");
+
             return Ok(new
             {
                 responseCode = System.Net.HttpStatusCode.OK,

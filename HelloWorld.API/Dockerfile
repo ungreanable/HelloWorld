@@ -26,6 +26,9 @@ RUN dotnet publish "./HelloWorld.API.csproj" -c $BUILD_CONFIGURATION -o /app/pub
 
 FROM base AS final
 WORKDIR /app
+USER root
+RUN mkdir Response
+RUN chmod 0777 Response
 ENV TZ=Asia/Bangkok
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "HelloWorld.API.dll"]
