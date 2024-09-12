@@ -7,7 +7,6 @@ ARG BUILD_VERSION
 ENV BUILD_VERSION=$BUILD_VERSION
 USER app
 WORKDIR /app
-RUN mkdir Response
 EXPOSE 8080
 EXPOSE 8081
 
@@ -27,8 +26,6 @@ RUN dotnet publish "./HelloWorld.API.csproj" -c $BUILD_CONFIGURATION -o /app/pub
 FROM base AS final
 WORKDIR /app
 USER root
-RUN mkdir Response
-RUN chmod 0777 Response
 ENV TZ=Asia/Bangkok
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "HelloWorld.API.dll"]
