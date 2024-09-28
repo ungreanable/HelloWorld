@@ -9,18 +9,18 @@ using System.IO.Compression;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddQuartz(q =>
-{
-    var jobKey = new JobKey("NotifyJob");
-    q.AddJob<NotifyJob>(opts => opts.WithIdentity(jobKey));
+//builder.Services.AddQuartz(q =>
+//{
+//    var jobKey = new JobKey("NotifyJob");
+//    q.AddJob<NotifyJob>(opts => opts.WithIdentity(jobKey));
 
-    q.AddTrigger(opts => opts
-        .ForJob(jobKey)
-        .WithIdentity("NotifyJob-trigger")
-        .WithCronSchedule("0 0 */3 ? * *"));
-});
+//    q.AddTrigger(opts => opts
+//        .ForJob(jobKey)
+//        .WithIdentity("NotifyJob-trigger")
+//        .WithCronSchedule("0 0 */3 ? * *"));
+//});
 
-builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+//builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 // Add services to the container.
 builder.Services.AddResponseCompression(options =>
