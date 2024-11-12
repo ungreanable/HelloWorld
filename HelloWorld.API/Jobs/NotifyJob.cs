@@ -16,7 +16,7 @@ namespace HelloWorld.API.Jobs
                 }
                 else
                 {
-                    await NotifyHelper.NotifyLine($"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}]: Claim Status Nothing Changed");
+                    //await NotifyHelper.NotifyLine($"[{DateTime.Now:dd/MM/yyyy HH:mm:ss}]: Claim Status Nothing Changed");
                 }
             }
             catch(Exception ex)
